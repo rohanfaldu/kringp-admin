@@ -35,6 +35,21 @@ const navItems: NavItem[] = [
     icon: <UserIcons />,
     name: "Country",
     path: "/country",
+  },
+  {
+    icon: <UserIcons />,
+    name: "State",
+    path: "/state",
+  },
+  {
+    icon: <UserIcons />,
+    name: "City",
+    path: "/city",
+  },
+  {
+    icon: <UserIcons />,
+    name: "Sub Category",
+    path: "/sub-category",
   }
 ];
 

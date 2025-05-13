@@ -8,7 +8,7 @@ import { FetchData } from "../../utils/FetchData";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import InputField from "../../components/form/input/InputField";
 import Select from "../../components/form/select/Select"
-
+import Button from '../../components/ui/button/Button';
 export default function EditCountry() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -48,10 +48,25 @@ export default function EditCountry() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            let perameter = {};
+            if(id){
+                perameter = {
+                    id: country.id,
+                    name: country.name,
+                    countryCode:country.countryCode,
+                    status: country.status,
+                }
+            }else{
+                perameter = {
+                    name: country.name,
+                    countryCode:country.countryCode,
+                    status: country.status,
+                }
+            }
             const endpoint = id ? `/country/edit/${id}` : '/country/create';
             const method = id ? 'POST' : 'POST';
-            const result = await FetchData(endpoint, method, country);
-
+            const result = await FetchData(endpoint, method, perameter);
+            console.log(country, ">>>>>>>>>>>> Country");
             if (result.status) {
                 navigate('/country');
             }
@@ -107,7 +122,21 @@ export default function EditCountry() {
                             />
                         </div>
                         <div className="flex justify-end space-x-3">
-                            <button
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => navigate(-1)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="primary"
+                                type="submit"
+                            >
+                                Save Changes
+                            </Button>
+                            {/* <button
                                 type="button"
                                 onClick={() => navigate(-1)}  // Use navigate(-1) instead of router.back()
                                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
@@ -119,7 +148,7 @@ export default function EditCountry() {
                                 className="px-4 py-2 text-sm font-medium text-gray bg-primary border border-transparent rounded-md hover:bg-primary-dark"
                             >
                                 Save Changes
-                            </button>
+                            </button> */}
                         </div>
                     </form>
                 </ComponentCard>

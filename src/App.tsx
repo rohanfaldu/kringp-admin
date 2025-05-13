@@ -6,18 +6,23 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import SignIn from "./pages/AuthPages/SignIn";
 import CountryList from "./pages/Country/Country";
+import StateList from "./pages/State/State";
+import CityList from "./pages/City/City";
+import SubCategoryList from "./pages/SubCategory/SubCategory"
 import EditCountry from "./pages/Country/edit";  // Add this import
+import EditState from "./pages/State/edit";
+import EditCity from "./pages/City/edit";
 import BusinessList from "./pages/Users/Business";
 import InterfaceList from "./pages/Users/Interface";
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const tokenExpireTime = localStorage.getItem("tokenExpireTime");
-  
+
   if (!isLoggedIn || (tokenExpireTime && Date.now() > parseInt(tokenExpireTime))) {
     localStorage.clear();
     return <Navigate to="/" replace />;
   }
-  
+
   return <>{children}</>;
 };
 
@@ -39,7 +44,12 @@ export default function App() {
             <Route path="/dashboard" element={<Home />} />
             <Route path="/users" element={<UserList />} />
             <Route path="/country" element={<CountryList />} />
+            <Route path="/state" element={<StateList />} />
+            <Route path="/city" element={<CityList />} />
+            <Route path="/sub-category" element={<SubCategoryList />} />
             <Route path="/country/detail" element={<EditCountry />} />  {/* Add this route */}
+            <Route path="/state/detail" element={<EditState />} />
+            <Route path="/city/detail" element={<EditCity />} />
             <Route path="/user/business" element={<BusinessList />} />  {/* Add this route */}
             <Route path="/user/influencer" element={<InterfaceList />} />  {/* Add this route */}
           </Route>
