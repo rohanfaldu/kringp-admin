@@ -9,7 +9,6 @@ import { State } from "../../Types/State";
 import { Pagination } from "../../Types/Pagination";
 import Preloader from "../../components/common/Preloader";
 import { FetchData } from "../../utils/FetchData";
-import Button from '../../components/ui/button/Button';
 
 export default function CityList() {
     const [cities, setCities] = useState<City[]>([]);
@@ -51,7 +50,10 @@ export default function CityList() {
         try {
             const result = await FetchData<CityResponse>('/city/getAll', 'POST', { page, limit });
             if (result && result.status && result.data?.items) {
-                setCities(result.data?.items);
+                const sortedCity = result.data.items.sort(
+                    (a: City, b: City) => new Date(b.createsAt).getTime() - new Date(a.createsAt).getTime()
+                );
+                setCities(sortedCity);
                 setPagination({
                     total: result.data.pagination?.total || 0,
                     currentPage: result.data.pagination?.page || 1,
@@ -153,12 +155,13 @@ export default function CityList() {
         );
     };
 
-    const handleAdd = () => {
-        navigate('/city/detail');
-    };
-
     if (loading) {
         return <Preloader />;
+    }
+
+    const addButton = {
+        label: "Add City",
+        slug: "/city/detail"
     }
 
     return (
@@ -167,12 +170,8 @@ export default function CityList() {
             <PageBreadcrumb pageTitle="Cities" />
             <div className="space-y-6">
                 <ComponentCard title="City List">
-                    <div className="mb-4">
-                        <Button size="sm" variant="primary" onClick={handleAdd}>
-                            Add City
-                        </Button>
-                    </div>
                     <AdvancedTable
+                        addButton={addButton}
                         data={cities}
                         columns={columns}
                         loading={loading}

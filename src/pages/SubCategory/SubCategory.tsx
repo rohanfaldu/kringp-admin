@@ -8,7 +8,6 @@ import { SubCategories, SubCategoryResponse } from "../../Types/SubCategory";
 import { Pagination } from "../../Types/Pagination";
 import Preloader from "../../components/common/Preloader";
 import { FetchData } from "../../utils/FetchData";
-import Button from '../../components/ui/button/Button';
 
 export default function CategoryList() {
     const [categories, setCategories] = useState<SubCategories[]>([]);
@@ -46,7 +45,7 @@ export default function CategoryList() {
                             className="h-20 w-30"
                         />
                     )}
-                    
+
                 </div>
             ),
         },
@@ -61,7 +60,7 @@ export default function CategoryList() {
         },
         {
             header: 'Created At',
-            accessorKey: 'createsAt',
+            accessorKey: 'createdAt',
             cell: (info: any) => new Date(info.getValue()).toLocaleDateString(),
         },
         {
@@ -119,13 +118,17 @@ export default function CategoryList() {
         }
     };
 
-     // Fetching subcategories
+    // Fetching subcategories
     const fetchSubCategories = async (page: number, limit: number) => {
         setLoading(true);
         try {
             const result = await FetchData<SubCategoryResponse>('/sub-categories/getAll', 'POST', { page, limit }, {});
             if (result.status) {
-                setCategories(result.data.items);
+                const sortedSubCategory = result.data.items.sort(
+                    (a: SubCategories, b: SubCategories) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                );
+
+                setCategories(sortedSubCategory);
                 setPagination({
                     total: result.data.pagination.total,
                     currentPage: result.data.pagination.page,
@@ -143,7 +146,7 @@ export default function CategoryList() {
     };
 
     useEffect(() => {
-        fetchSubCategories(currentPage, rowsPerPage);   
+        fetchSubCategories(currentPage, rowsPerPage);
     }, [currentPage, rowsPerPage]);
 
     // Handle page change
@@ -171,10 +174,10 @@ export default function CategoryList() {
     if (loading) {
         return <Preloader />;
     }
-
-    const handleAdd = () => {
-        navigate('/sub-categories/detail');
-    };
+    const addButton = {
+        label: "Add Sub Category",
+        slug: "/sub-categories/detail"
+    }
 
     return (
         <>
@@ -182,16 +185,8 @@ export default function CategoryList() {
             <PageBreadcrumb pageTitle="Sub Category" />
             <div className="space-y-6">
                 <ComponentCard title="Sub Category List">
-                    <div className="mb-4">
-                        <Button
-                            size="sm"
-                            variant="primary"
-                            onClick={handleAdd}
-                        >
-                            Add Sub Category
-                        </Button>
-                    </div>
                     <AdvancedTable
+                        addButton={addButton}
                         data={categories}
                         columns={columns}
                         loading={loading}

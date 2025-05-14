@@ -17,6 +17,9 @@ import BusinessList from "./pages/Users/Business";
 import InterfaceList from "./pages/Users/Interface";
 import CategoryList from "./pages/Category/Category";
 import EditCategory from "./pages/Category/Edit";
+import BrandList from "./pages/Brand/Brand";
+import EditBrand from "./pages/Brand/Edit";
+
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const tokenExpireTime = localStorage.getItem("tokenExpireTime");
@@ -46,18 +49,21 @@ export default function App() {
           }>
             <Route path="/dashboard" element={<Home />} />
             <Route path="/users" element={<UserList />} />
-            <Route path="/country" element={<CountryList />} />
-            <Route path="/state" element={<StateList />} />
-            <Route path="/city" element={<CityList />} />
-            <Route path="/sub-category" element={<SubCategoryList />} />
-            <Route path="/sub-categories/detail" element={<EditSubCategory />} />
-            <Route path="/country/detail" element={<EditCountry />} />  {/* Add this route */}
-            <Route path="/state/detail" element={<EditState />} />
-            <Route path="/city/detail" element={<EditCity />} />
             <Route path="/user/business" element={<BusinessList />} />  {/* Add this route */}
             <Route path="/user/influencer" element={<InterfaceList />} />
+            <Route path="/country" element={<CountryList />} />
+            <Route path="/country/detail" element={<EditCountry />} />  {/* Add this route */}
+            <Route path="/state" element={<StateList />} />
+            <Route path="/state/detail" element={<EditState />} />
+            <Route path="/city" element={<CityList />} />
+            <Route path="/city/detail" element={<EditCity />} />
             <Route path="/category" element={<CategoryList />} />
             <Route path="/category/detail" element={<EditCategory />} />
+            <Route path="/sub-category" element={<SubCategoryList />} />
+            <Route path="/sub-categories/detail" element={<EditSubCategory />} />
+            <Route path="/brand" element={<BrandList />} />
+            <Route path="/brand/detail" element={<EditBrand />} />
+
           </Route>
 
           {/* Fallback Route */}

@@ -8,7 +8,6 @@ import { Categories, CategoriesResponse } from "../../Types/Category";
 import { Pagination } from "../../Types/Pagination";
 import Preloader from "../../components/common/Preloader";
 import { FetchData } from "../../utils/FetchData";
-import Button from '../../components/ui/button/Button';
 
 export default function CategoryList() {
     const [categories, setCategories] = useState<Categories[]>([]);
@@ -46,7 +45,7 @@ export default function CategoryList() {
                             className="h-20 w-30"
                         />
                     )}
-                    
+
                 </div>
             ),
         },
@@ -122,10 +121,13 @@ export default function CategoryList() {
     const fetchCountries = async (page: number, limit: number) => {
         setLoading(true);
         try {
-            const result = await FetchData<CategoriesResponse>('/categories/getAll', 'POST', { page, limit },{});
+            const result = await FetchData<CategoriesResponse>('/categories/getAll', 'POST', { page, limit }, {});
             console.log(result, 'result')
             if (result.status) {
-                setCategories(result.data.categories);
+                const sortedCategories = result.data.categories.sort(
+                    (a: Categories, b: Categories) => new Date(b.createsAt).getTime() - new Date(a.createsAt).getTime()
+                );
+                setCategories(sortedCategories);
                 setPagination({
                     total: result.data.pagination.total,
                     currentPage: result.data.pagination.page,
@@ -172,9 +174,10 @@ export default function CategoryList() {
         return <Preloader />;
     }
 
-    const handleAdd = () => {
-        navigate('/category/detail');
-    };
+    const addButton = {
+        label: "Add Category",
+        slug: "/category/detail"
+    }
 
     return (
         <>
@@ -182,16 +185,8 @@ export default function CategoryList() {
             <PageBreadcrumb pageTitle="Category" />
             <div className="space-y-6">
                 <ComponentCard title="Category List">
-                    <div className="mb-4">
-                        <Button
-                            size="sm"
-                            variant="primary"
-                            onClick={handleAdd}
-                        >
-                            Add Categories
-                        </Button>
-                    </div>
                     <AdvancedTable
+                        addButton={addButton}
                         data={categories}
                         columns={columns}
                         loading={loading}

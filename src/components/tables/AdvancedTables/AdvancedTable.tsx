@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../ui/table";
-
+import { useNavigate } from 'react-router-dom';
 import Button from "../../ui/button/Button";
 import { ExportIcons } from "../../../icons";
 import Preloader from "../../../components/common/Preloader";
@@ -26,8 +26,15 @@ interface PaginationProps {
   totalPages: number;
 }
 
+
+interface AddButtonProps {
+  label: string,
+  slug: string
+}
+
 // Props for the AdvancedTable component
 interface AdvancedTableProps<T> {
+  addButton?: AddButtonProps | null,
   data: T[];
   columns: TableColumn<T>[];
   loading?: boolean;
@@ -46,6 +53,7 @@ const getValue = (obj: any, path: string): any => {
 };
 
 function AdvancedTable<T extends Record<string, any>>({
+  addButton = null,
   data,
   columns,
   loading = false,
@@ -60,6 +68,8 @@ function AdvancedTable<T extends Record<string, any>>({
   const [filteredData, setFilteredData] = useState<T[]>([]);
   const [paginatedData, setPaginatedData] = useState<T[]>([]);
   const itemsPerPage = 5;
+  const navigate = useNavigate();
+  console.log(addButton, '>>>> addButton')
   // Default search function if not provided
   const defaultSearchFunction = (item: T, term: string) => {
     const searchString = term.toLowerCase();
@@ -84,25 +94,25 @@ function AdvancedTable<T extends Record<string, any>>({
   // Filter data when search term changes
   useEffect(() => {
     if (!data) return;
-    
+
     if (searchTerm === '') {
       setFilteredData(data);
     } else {
-      const filtered = data.filter(item => 
-        searchFunction 
+      const filtered = data.filter(item =>
+        searchFunction
           ? searchFunction(item, searchTerm)
           : defaultSearchFunction(item, searchTerm)
       );
       setFilteredData(filtered);
     }
-    
+
     // Reset to first page when search changes
     // if (pagination) {
     //   onPageChange && onPageChange(1);
     // } else {
     //   setCurrentPage(1);
     // }
-  //  setCurrentPage(pagination);
+    //  setCurrentPage(pagination);
   }, [searchTerm, data, searchFunction]);
 
   // Handle pagination internally or externally
@@ -118,8 +128,8 @@ function AdvancedTable<T extends Record<string, any>>({
   }, [filteredData, currentPage, itemsPerPage, pagination, data]);
 
   // Calculate total pages for internal pagination
-  const totalPages = pagination 
-    ? pagination.totalPages 
+  const totalPages = pagination
+    ? pagination.totalPages
     : Math.ceil(filteredData.length / itemsPerPage);
 
   // Get page numbers for pagination controls
@@ -163,6 +173,11 @@ function AdvancedTable<T extends Record<string, any>>({
       setCurrentPageValue(page);
     }
   };
+  // if(addButton){
+  const handleAdd = (slug: any) => {
+    navigate(slug);
+  };
+  //}
 
   return (
     loading ? (
@@ -179,69 +194,90 @@ function AdvancedTable<T extends Record<string, any>>({
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <CSVLink
-            data={filteredData}
-            filename="table-data.csv"
-            className="text-gray-400 hover:text-gray-600 relative group bg-gray-100 hover:bg-gray-200 p-2 rounded-lg dark:bg-gray-900 dark:hover:bg-gray-800"
-          >
-            <ExportIcons />
-          </CSVLink>
-        </div>
+          <div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-        <div className="max-w-full overflow-x-auto">
-          <Table>
-            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-              <TableRow>
-                {columns.map((column, index) => (
-                  <TableCell 
-                    key={index} 
-                    isHeader 
-                    className="px-5 py-3 font-bold text-gray-500 text-center uppercase text-theme-xs dark:text-gray-400"
-                  >
-                    {column.header}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHeader>
-
-            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {paginatedData.length === 0 ? (
-                <TableRow>
-                  <TableCell 
-                    // colSpan={columns.length} 
-                    className="px-5 py-4 text-center text-gray-500"
-                  >
-                    No data available
-                  </TableCell>
-                </TableRow>
-              ) : (
-                paginatedData.map((item, rowIndex) => (
-                  <TableRow key={rowIndex}>
-                    {columns.map((column, colIndex) => (
-                      <TableCell 
-                        key={colIndex} 
-                        className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400"
-                      >
-                        {column.cell ? (
-                          column.cell({
-                            getValue: () => getValue(item, column.accessorKey),
-                            row: { original: item }
-                          })
-                        ) : (
-                          getValue(item, column.accessorKey)
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
+            <div className="flex justify-center items-center gap-4">
+              {(addButton) && (
+                <>
+                  <div className="">
+                    <Button
+                      size="sm"
+                      variant="primary"
+                      onClick={() => handleAdd(addButton.slug)}
+                    >
+                      {addButton.label}
+                    </Button>
+                  </div>
+                </>
               )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
+              <div className="">
+                <CSVLink
+                  data={filteredData}
+                  filename="table-data.csv"
+                  className="inline-flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-sm transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+                >
+                  <ExportIcons className="w-5 h-5" />
+                </CSVLink>
 
-      <div className="flex flex-wrap items-center justify-between">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+          <div className="max-w-full overflow-x-auto">
+            <Table>
+              <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                <TableRow>
+                  {columns.map((column, index) => (
+                    <TableCell
+                      key={index}
+                      isHeader
+                      className="px-5 py-3 font-bold text-gray-500 text-center uppercase text-theme-xs dark:text-gray-400"
+                    >
+                      {column.header}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHeader>
+
+              <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                {paginatedData.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      // colSpan={columns.length} 
+                      className="px-5 py-4 text-center text-gray-500"
+                    >
+                      No data available
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  paginatedData.map((item, rowIndex) => (
+                    <TableRow key={rowIndex}>
+                      {columns.map((column, colIndex) => (
+                        <TableCell
+                          key={colIndex}
+                          className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400"
+                        >
+                          {column.cell ? (
+                            column.cell({
+                              getValue: () => getValue(item, column.accessorKey),
+                              row: { original: item }
+                            })
+                          ) : (
+                            getValue(item, column.accessorKey)
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between">
           <div className="text-sm text-gray-600 dark:text-gray-400">
             {pagination ? (
               `Showing ${((currentPageValue - 1) * pagination.limit) + 1} to ${Math.min(currentPageValue * pagination.limit, pagination.total)} of ${pagination.total} entries`
@@ -261,16 +297,16 @@ function AdvancedTable<T extends Record<string, any>>({
                     Previous
                   </Button>
                 </li>
-                
+
                 {getPageNumbers(
-                  pagination ? currentPageValue : currentPage, 
+                  pagination ? currentPageValue : currentPage,
                   totalPages
                 ).map((page, index) => (
                   <li key={index}>
                     {typeof page === 'number' ? (
                       <Button
                         size="sm"
-                        variant={pagination ? 
+                        variant={pagination ?
                           (currentPageValue === page ? 'primary' : 'outline') :
                           (currentPage === page ? 'primary' : 'outline')
                         }
@@ -283,13 +319,13 @@ function AdvancedTable<T extends Record<string, any>>({
                     )}
                   </li>
                 ))}
-                
+
                 <li>
                   <Button
                     size="sm"
                     variant="primary"
-                    disabled={pagination ? 
-                      currentPageValue === pagination.totalPages : 
+                    disabled={pagination ?
+                      currentPageValue === pagination.totalPages :
                       currentPage === totalPages
                     }
                     onClick={() => handleInternalPageChange(pagination ? currentPageValue + 1 : currentPage + 1)}

@@ -1,15 +1,13 @@
-export interface SubCategories {
+export interface Brand {
     id: string;
-    image: String;
     name: string;
-    categoryId: string;
     status: boolean;
-    createdAt: Date;
+    createsAt: Date;
     updatedAt: Date;
 }
 
-export interface SubCategoryResponse {
-    items: SubCategories[];
+export interface BrandResponse {
+    Brands: Brand[];
     pagination: {
         total: number;
         page: number;

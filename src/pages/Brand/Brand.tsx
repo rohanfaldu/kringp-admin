@@ -4,13 +4,13 @@ import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
 import AdvancedTable from "../../components/tables/AdvancedTables/AdvancedTable";
-import { State, StateResponse } from "../../Types/State";
+import { Brand, BrandResponse } from "../../Types/Brand";
 import { Pagination } from "../../Types/Pagination";
 import Preloader from "../../components/common/Preloader";
 import { FetchData } from "../../utils/FetchData";
 
-export default function StateList() {
-    const [states, setStates] = useState<State[]>([]);
+export default function BrandList() {
+    const [brands, setBrands] = useState<Brand[]>([]);
     const [pagination, setPagination] = useState<Pagination | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -18,8 +18,8 @@ export default function StateList() {
 
     const navigate = useNavigate();
 
-    const handleEdit = (state: State) => {
-        navigate(`/state/detail?id=${state.id}`);
+    const handleEdit = (brand: Brand) => {
+        navigate(`/brand/detail?id=${brand.id}`);
     };
 
     const columns = [
@@ -28,37 +28,30 @@ export default function StateList() {
             accessorKey: 'name',
         },
         {
-            header: 'Country Name',
-            accessorKey: 'countryKey',
-            cell: (info: any) => {
-                const countryKey = info.getValue();
-                return countryKey?.name || 'Not Assigned';
-            }
-        },
-        {
             header: 'Status',
             accessorKey: 'status',
             cell: (info: any) => info.getValue() ? 'Active' : 'Inactive',
         },
         {
             header: 'Created At',
-            accessorKey: 'createsAt', // Fixed property name based on API response
-            cell: (info: any) => info.getValue() ? new Date(info.getValue()).toLocaleDateString() : 'N/A',
+            accessorKey: 'createsAt',
+            cell: (info: any) => new Date(info.getValue()).toLocaleDateString(),
         },
         {
             header: 'Actions',
             accessorKey: 'actions',
             cell: (info: any) => (
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center  gap-2">
                     <button
                         onClick={() => handleEdit(info.row.original)}
                         className="text-blue-500 hover:text-blue-700 relative group bg-blue-100 hover:bg-blue-200 p-2 rounded-lg dark:bg-blue-900/20 dark:hover:bg-blue-900/30 before:content-[attr(data-tooltip)] before:absolute before:bottom-full before:left-1/2 before:-translate-x-1/2 before:rounded-lg before:font-inter before:px-2 before:py-1 before:text-[0.6875rem] before:max-w-[300px] before:break-words before:font-medium before:bg-[#131920] before:text-white before:opacity-0 before:invisible hover:before:opacity-100 hover:before:visible before:transition-all before:duration-200 before:z-50 before:whitespace-nowrap before:mb-1"
                         data-tooltip="Edit"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" className="size-[18px]">
-                            <path d="M11 2H9C4 2 2 4 2 9v6c0 5 2 7 7 7h6c5 0 7-2 7-7v-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-                            <path d="M16.04 3.02 8.16 10.9c-.3.3-.6.89-.66 1.32l-.43 3.01c-.16 1.09.61 1.85 1.7 1.7l3.01-.43c.42-.06 1.01-.36 1.32-.66l7.88-7.88c1.36-1.36 2-2.94 0-4.94-2-2-3.58-1.36-4.94 0Z" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"></path>
-                            <path d="M14.91 4.15a7.144 7.144 0 0 0 4.94 4.94" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"></path>
+                            <path d="M11 2H9C4 2 2 4 2 9v6c0 5 2 7 7 7h6c5 0 7-2 7-7v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path d="M16.04 3.02 8.16 10.9c-.3.3-.6.89-.66 1.32l-.43 3.01c-.16 1.09.61 1.85 1.7 1.7l3.01-.43c.42-.06 1.01-.36 1.32-.66l7.88-7.88c1.36-1.36 2-2.94 0-4.94-2-2-3.58-1.36-4.94 0Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+                            <path d="M14.91 4.15a7.144 7.144 0 0 0 4.94 4.94" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+
                         </svg>
                     </button>
                     <button
@@ -75,10 +68,12 @@ export default function StateList() {
         },
     ];
 
+    // Add these handler function
+
     const handleDelete = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this state?')) {
+        if (window.confirm('Are you sure you want to delete this brand?')) {
             try {
-                const response = await fetch(`https://api.kringp.com/api/state/delete/${id}`, {
+                const response = await fetch(`https://api.kringp.com/api/brand-type/delete/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
@@ -87,72 +82,44 @@ export default function StateList() {
 
                 if (response.ok) {
                     // Refresh the table data
-                    fetchStates(currentPage, rowsPerPage);
+                    fetchBrands(currentPage, rowsPerPage);
                 } else {
-                    throw new Error('Failed to delete state');
+                    throw new Error('Failed to delete brand');
                 }
             } catch (error) {
-                console.error('Error deleting state:', error);
+                console.error('Error deleting brand:', error);
             }
         }
     };
 
-    const fetchStates = async (page: number, limit: number) => {
+    const fetchBrands = async (page: number, limit: number) => {
         setLoading(true);
         try {
-            const result = await FetchData<StateResponse>('/state/getAll', 'POST', { page, limit });
-            console.log('API response:', result);
+            const result = await FetchData<BrandResponse>('/brand-type/getAll', 'POST', { page, limit });
+            console.log(result, '>>>>>>>> brand result')
             if (result.status) {
-                const sortedState = result.data.items.sort(
-                    (a: State, b: State) => new Date(b.createsAt).getTime() - new Date(a.createsAt).getTime()
+                const sortedBrands = result.data.Brands.sort(
+                    (a: Brand, b: Brand) => new Date(b.createsAt).getTime() - new Date(a.createsAt).getTime()
                 );
-                if (result.data && Array.isArray(sortedState)) {
-
-                    setStates(sortedState);
-
-                    // Extract pagination information
-                    if (result.data.pagination) {
-                        setPagination({
-                            total: result.data.pagination.total || 0,
-                            currentPage: result.data.pagination.page || 1,
-                            limit: result.data.pagination.limit || 10,
-                            totalPages: result.data.pagination.totalPages || 1
-                        });
-                    } else {
-                        setPagination({
-                            total: result.data.items.length,
-                            currentPage: page,
-                            limit: limit,
-                            totalPages: Math.ceil(result.data.items.length / limit)
-                        });
-                    }
-                } else if (result.data && Array.isArray(result.data)) {
-                    // Alternative case: if data is directly an array of states
-                    setStates(result.data);
-                    setPagination({
-                        total: result.data.length,
-                        currentPage: page,
-                        limit: limit,
-                        totalPages: Math.ceil(result.data.length / limit)
-                    });
-                } else {
-                    console.error("Unexpected data structure:", result.data);
-                    setStates([]);
-                }
+                setBrands(sortedBrands);
+                setPagination({
+                    total: result.data.pagination.total,
+                    currentPage: result.data.pagination.page,
+                    limit: result.data.pagination.limit,
+                    totalPages: result.data.pagination.totalPages
+                });
             } else {
-                console.error("API returned error:", result?.message || "Unknown error");
-                setStates([]);
+                throw new Error(result.message || 'Failed to fetch brands');
             }
         } catch (error) {
-            console.error("Failed to fetch states:", error);
-            setStates([]);
+            console.error("Failed to fetch brands:", error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchStates(currentPage, rowsPerPage);
+        fetchBrands(currentPage, rowsPerPage);
     }, [currentPage, rowsPerPage]);
 
     // Handle page change
@@ -166,15 +133,13 @@ export default function StateList() {
         setCurrentPage(1); // Reset to first page when changing limit
     };
 
-    // Custom search function to filter states
-    const searchStates = (state: State, searchTerm: string) => {
+    // Custom search function to filter countries
+    const searchBrands = (country: Brand, searchTerm: string) => {
         const term = searchTerm.toLowerCase();
         return (
-            (state.name && state.name.toLowerCase().includes(term)) ||
-            // (state.countryKey.name && state.countryKey.name.toLowerCase().includes(term)) ||
-            (state.countryId && state.countryId.toLowerCase().includes(term)) ||
-            (typeof state.status === 'boolean' &&
-                (state.status ? 'active' : 'inactive').includes(term))
+            (country.name && country.name.toLowerCase().includes(term)) ||
+            (typeof country.status === 'boolean' &&
+                (country.status ? 'active' : 'inactive').includes(term))
         );
     };
 
@@ -183,27 +148,27 @@ export default function StateList() {
     }
 
     const addButton = {
-        label: "Add State",
-        slug: "/state/detail"
+        label: "Add Brand",
+        slug: "/brand/detail"
     }
-
     return (
         <>
-            <PageMeta title="States List" description="States List" />
-            <PageBreadcrumb pageTitle="States" />
+            <PageMeta title="Brand List" description="Brand List" />
+            <PageBreadcrumb pageTitle="Brand" />
             <div className="space-y-6">
-                <ComponentCard title="State List">
+                <ComponentCard title="Brand List">
                     <AdvancedTable
                         addButton={addButton}
-                        data={states}
+                        data={brands}
                         columns={columns}
                         loading={loading}
                         pagination={pagination}
                         onPageChange={handlePageChange}
                         onRowsPerPageChange={handleRowsPerPageChange}
-                        searchFunction={searchStates}
+                        searchFunction={searchBrands}
                     />
                 </ComponentCard>
+
             </div>
         </>
     );

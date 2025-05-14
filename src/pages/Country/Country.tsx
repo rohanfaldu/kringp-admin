@@ -8,7 +8,6 @@ import { Country, CountryResponse } from "../../Types/Country";
 import { Pagination } from "../../Types/Pagination";
 import Preloader from "../../components/common/Preloader";
 import { FetchData } from "../../utils/FetchData";
-import Button from '../../components/ui/button/Button';
 
 export default function CountryList() {
     const [countries, setCountries] = useState<Country[]>([]);
@@ -102,8 +101,11 @@ export default function CountryList() {
         try {
             const result = await FetchData<CountryResponse>('/country/getAll', 'POST', { page, limit });
             console.log(result, 'result')
-            if (result.status) {
-                setCountries(result.data.countries);
+           if (result.status) {
+                const sortedCountry = result.data.countries.sort(
+                    (a: Country, b: Country) => new Date(b.createsAt).getTime() - new Date(a.createsAt).getTime()
+                );
+                setCountries(sortedCountry);
                 setPagination({
                     total: result.data.pagination.total,
                     currentPage: result.data.pagination.page,
@@ -150,9 +152,10 @@ export default function CountryList() {
         return <Preloader />;
     }
 
-    const handleAdd = () => {
-        navigate('/country/detail');
-    };
+    const addButton = {
+        label: "Add Country",
+        slug: "/country/detail"
+    }
 
     return (
         <>
@@ -160,22 +163,8 @@ export default function CountryList() {
             <PageBreadcrumb pageTitle="Countries" />
             <div className="space-y-6">
                 <ComponentCard title="Country List">
-                    <div className="mb-4">
-                        {/* <button
-                            onClick={handleAdd}
-                            className="px-4 py-2 text-sm font-medium text-red bg-primary border border-transparent rounded-md hover:bg-primary-dark"
-                        >
-                            Add Country
-                        </button> */}
-                        <Button
-                            size="sm"
-                            variant="primary"
-                            onClick={handleAdd}
-                        >
-                            Add Country
-                        </Button>
-                    </div>
                     <AdvancedTable
+                        addButton={addButton}
                         data={countries}
                         columns={columns}
                         loading={loading}
