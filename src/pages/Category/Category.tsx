@@ -173,7 +173,7 @@ export default function CategoryList() {
     }
 
     const handleAdd = () => {
-        navigate('/country/detail');
+        navigate('/category/detail');
     };
 
     return (

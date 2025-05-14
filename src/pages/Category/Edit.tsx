@@ -13,7 +13,7 @@ import Select from "../../components/form/select/Select"
 import Button from '../../components/ui/button/Button';
 import { State, StateResponse } from '../../Types/State';
 import { Categories } from '../../Types/Category';
-
+import { getImageName } from '../../components/common/Function';
 export default function EditCategory() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -32,7 +32,7 @@ export default function EditCategory() {
     const [loading, setLoading] = useState(id ? true : false);
     const [submitLoading, setSubmitLoading] = useState(false);
     const [states, setStates] = useState<State[]>([]);
-
+    const [fileName, setFileName] = useState<string>("");
     useEffect(() => {
         try {
             const getstateList = async () => {
@@ -56,6 +56,7 @@ export default function EditCategory() {
                             const categoryData = result.data;
 
                             if (categoryData) {
+                                console.log(categoryData.image, 'Image')
                                 setCategory({
                                     id: categoryData.id || '',
                                     name: categoryData.name || '',
@@ -154,9 +155,11 @@ export default function EditCategory() {
                             <FileInput
                                 label="Category Image"
                                 ref={fileInputRef}
-                                onChange={(e) =>
-                                    setCategory({ ...category, image: e.target.files?.[0]?.name || '' })
-                                }
+                                fileName={ (category.image)?getImageName(category.image):''}
+                                onChange={(e) => {
+                                    setCategory({ ...category, image: category.image });
+                                }}
+
                             />
                             {/* <Select
                                 label="State"

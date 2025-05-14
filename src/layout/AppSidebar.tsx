@@ -8,6 +8,7 @@ import {
   UserIcons,
   DashboardIcons,
   MapIcons,
+  CategoryIcons,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -41,10 +42,13 @@ const navItems: NavItem[] = [
       { name: "City", path: "/city", pro: false },
     ],
   },
-  {
-    icon: <UserIcons />,
-    name: "Sub Category",
-    path: "/sub-category",
+   {
+    icon: <CategoryIcons />,
+    name: "All Category",
+    subItems: [
+      { name: "Category", path: "/category", pro: false },
+      { name: "Sub Category", path: "/sub-category", pro: false }
+    ],
   }
 ];
 

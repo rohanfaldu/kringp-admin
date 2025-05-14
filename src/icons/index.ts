@@ -58,6 +58,7 @@ import { ReactComponent as DashboardIcons } from "./dashboard.svg?react";
 import { ReactComponent as FormIcons } from "./form.svg?react";
 import { ReactComponent as ExportIcons } from "./export.svg?react";
 import { ReactComponent as MapIcons } from "./map.svg?react";
+import { ReactComponent as CategoryIcons } from "./all-category.svg?react";
 
 export {
   ErrorHexaIcon,
@@ -119,5 +120,6 @@ export {
   DashboardIcons,
   FormIcons,
   ExportIcons,
-  MapIcons
+  MapIcons,
+  CategoryIcons
 };
