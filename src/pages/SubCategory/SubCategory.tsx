@@ -4,14 +4,14 @@ import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
 import AdvancedTable from "../../components/tables/AdvancedTables/AdvancedTable";
-import { SubCategory, SubCategoryResponse } from "../../Types/SubCategory";
+import { SubCategories, SubCategoryResponse } from "../../Types/SubCategory";
 import { Pagination } from "../../Types/Pagination";
 import Preloader from "../../components/common/Preloader";
 import { FetchData } from "../../utils/FetchData";
 import Button from '../../components/ui/button/Button';
 
 export default function CategoryList() {
-    const [categories, setCategories] = useState<SubCategory[]>([]);
+    const [categories, setCategories] = useState<SubCategories[]>([]);
     const [pagination, setPagination] = useState<Pagination | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -19,7 +19,7 @@ export default function CategoryList() {
 
     const navigate = useNavigate();
 
-    const handleEdit = (subcategories: SubCategory) => {
+    const handleEdit = (subcategories: SubCategories) => {
         navigate(`/sub-categories/detail?id=${subcategories.id}`);
     };
 
