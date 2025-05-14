@@ -10,8 +10,8 @@ import Preloader from "../../components/common/Preloader";
 import { FetchData } from "../../utils/FetchData";
 import Button from '../../components/ui/button/Button';
 
-export default function CountryList() {
-    const [countries, setCountries] = useState<SubCategory[]>([]);
+export default function CategoryList() {
+    const [categories, setCategories] = useState<SubCategory[]>([]);
     const [pagination, setPagination] = useState<Pagination | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -19,18 +19,40 @@ export default function CountryList() {
 
     const navigate = useNavigate();
 
-    const handleEdit = (country: SubCategory) => {
-        navigate(`/country/detail?id=${country.id}`);
+    const handleEdit = (subcategories: SubCategory) => {
+        navigate(`/sub-categories/detail?id=${subcategories.id}`);
     };
 
     const columns = [
         {
-            header: 'Name',
-            accessorKey: 'name',
+            header: 'Image',
+            accessorKey: 'image',
+            cell: (info: any) => (
+                <div className="flex items-center justify-center">
+
+                    {info.row.original.image ? (
+                        <img
+                            src={info.row.original.image ? info.row.original.image : '/images/common/no-image-available.svg'}
+                            alt="Category Image"
+                            className="h-20 w-30"
+                            onError={(e) => {
+                                (e.target as HTMLImageElement).src = '/images/common/no-image-available.svg'; // Fallback image
+                            }}
+                        />
+                    ) : (
+                        <img
+                            src="/images/common/no-image-available.svg"
+                            alt="Default"
+                            className="h-20 w-30"
+                        />
+                    )}
+                    
+                </div>
+            ),
         },
         {
-            header: 'Country Code',
-            accessorKey: 'countryCode',
+            header: 'Name',
+            accessorKey: 'name',
         },
         {
             header: 'Status',
@@ -76,9 +98,9 @@ export default function CountryList() {
     // Add these handler function
 
     const handleDelete = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this country?')) {
+        if (window.confirm('Are you sure you want to delete this category?')) {
             try {
-                const response = await fetch(`https://api.kringp.com/api/country/delete/${id}`, {
+                const response = await fetch(`https://api.kringp.com/api/sub-categories/delete/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
@@ -87,23 +109,23 @@ export default function CountryList() {
 
                 if (response.ok) {
                     // Refresh the table data
-                    fetchCountries(currentPage, rowsPerPage);
+                    fetchSubCategories(currentPage, rowsPerPage);
                 } else {
-                    throw new Error('Failed to delete country');
+                    throw new Error('Failed to delete sub-categories');
                 }
             } catch (error) {
-                console.error('Error deleting country:', error);
+                console.error('Error deleting sub-categories:', error);
             }
         }
     };
 
-    const fetchCountries = async (page: number, limit: number) => {
+     // Fetching subcategories
+    const fetchSubCategories = async (page: number, limit: number) => {
         setLoading(true);
         try {
-            const result = await FetchData<CountryResponse>('/country/getAll', 'POST', { page, limit });
-            console.log(result, 'result')
+            const result = await FetchData<SubCategoryResponse>('/sub-categories/getAll', 'POST', { page, limit }, {});
             if (result.status) {
-                setCountries(result.data.countries);
+                setCategories(result.data.items);
                 setPagination({
                     total: result.data.pagination.total,
                     currentPage: result.data.pagination.page,
@@ -111,17 +133,17 @@ export default function CountryList() {
                     totalPages: result.data.pagination.totalPages
                 });
             } else {
-                throw new Error(result.message || 'Failed to fetch countries');
+                throw new Error(result.message || 'Failed to fetch sub-categories');
             }
         } catch (error) {
-            console.error("Failed to fetch countries:", error);
+            console.error("Failed to fetch sub-categories:", error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchCountries(currentPage, rowsPerPage);
+        fetchSubCategories(currentPage, rowsPerPage);   
     }, [currentPage, rowsPerPage]);
 
     // Handle page change
@@ -136,7 +158,7 @@ export default function CountryList() {
     };
 
     // Custom search function to filter countries
-    const searchCountries = (country: Country, searchTerm: string) => {
+    const searchCountries = (country: any, searchTerm: string) => {
         const term = searchTerm.toLowerCase();
         return (
             (country.name && country.name.toLowerCase().includes(term)) ||
@@ -151,7 +173,7 @@ export default function CountryList() {
     }
 
     const handleAdd = () => {
-        navigate('/country/detail');
+        navigate('/sub-categories/detail');
     };
 
     return (
@@ -161,22 +183,16 @@ export default function CountryList() {
             <div className="space-y-6">
                 <ComponentCard title="Sub Category List">
                     <div className="mb-4">
-                        {/* <button
-                            onClick={handleAdd}
-                            className="px-4 py-2 text-sm font-medium text-red bg-primary border border-transparent rounded-md hover:bg-primary-dark"
-                        >
-                            Add Country
-                        </button> */}
                         <Button
                             size="sm"
                             variant="primary"
                             onClick={handleAdd}
                         >
-                            Add Country
+                            Add Sub Category
                         </Button>
                     </div>
                     <AdvancedTable
-                        data={countries}
+                        data={categories}
                         columns={columns}
                         loading={loading}
                         pagination={pagination}

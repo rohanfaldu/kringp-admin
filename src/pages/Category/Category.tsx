@@ -98,9 +98,9 @@ export default function CategoryList() {
     // Add these handler function
 
     const handleDelete = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this country?')) {
+        if (window.confirm('Are you sure you want to delete this category?')) {
             try {
-                const response = await fetch(`https://api.kringp.com/api/country/delete/${id}`, {
+                const response = await fetch(`https://api.kringp.com/api/categories/delete/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
@@ -122,7 +122,7 @@ export default function CategoryList() {
     const fetchCountries = async (page: number, limit: number) => {
         setLoading(true);
         try {
-            const result = await FetchData<CategoriesResponse>('/categories/getAll', 'POST', { page, limit },{},false);
+            const result = await FetchData<CategoriesResponse>('/categories/getAll', 'POST', { page, limit },{});
             console.log(result, 'result')
             if (result.status) {
                 setCategories(result.data.categories);

@@ -9,9 +9,9 @@ import CountryList from "./pages/Country/Country";
 import StateList from "./pages/State/State";
 import CityList from "./pages/City/City";
 import SubCategoryList from "./pages/SubCategory/SubCategory"
-import EditCountry from "./pages/Country/Edit";  // Add this import
-import EditState from "./pages/State/Edit";
-import EditCity from "./pages/City/Edit";
+import EditCountry from "./pages/Country//edit";
+import EditState from "./pages/State/edit";
+import EditCity from "./pages/City/edit";
 import BusinessList from "./pages/Users/Business";
 import InterfaceList from "./pages/Users/Interface";
 import CategoryList from "./pages/Category/Category";

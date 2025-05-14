@@ -171,7 +171,8 @@ export default function StateList() {
         const term = searchTerm.toLowerCase();
         return (
             (state.name && state.name.toLowerCase().includes(term)) ||
-            (state.countryKey.name && state.countryKey.name.toLowerCase().includes(term)) ||
+            // (state.countryKey.name && state.countryKey.name.toLowerCase().includes(term)) ||
+            (state.countryId && state.countryId.toLowerCase().includes(term)) ||
             (typeof state.status === 'boolean' &&
                 (state.status ? 'active' : 'inactive').includes(term))
         );

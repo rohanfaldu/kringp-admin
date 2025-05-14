@@ -1,4 +1,4 @@
-export interface SubCategory {
+export interface SubCategories {
     id: string;
     image: String;
     name: string;
@@ -9,7 +9,7 @@ export interface SubCategory {
 }
 
 export interface SubCategoryResponse {
-    subCategories: SubCategory[];
+    items: SubCategories[];
     pagination: {
         total: number;
         page: number;

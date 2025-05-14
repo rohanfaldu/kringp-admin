@@ -27,7 +27,6 @@ export default function EditState() {
     // console.log(state, ">>>>>>>>>>>> setState");
 
     const [loading, setLoading] = useState(id ? true : false);
-    const [submitLoading, setSubmitLoading] = useState(false);
     const [states, setStates] = useState<State[]>([]);
 
     useEffect(() => {

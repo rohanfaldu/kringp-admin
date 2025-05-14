@@ -3,7 +3,6 @@ import Preloader from "../../components/common/Preloader";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
-import { City } from "../../Types/City";
 import { FetchData } from "../../utils/FetchData";
 import { FetchImageData } from "../../utils/FetchImageData";
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -11,7 +10,6 @@ import InputField from "../../components/form/input/InputField";
 import FileInput from "../../components/form/input/FileInput";
 import Select from "../../components/form/select/Select"
 import Button from '../../components/ui/button/Button';
-import { State, StateResponse } from '../../Types/State';
 import { Categories } from '../../Types/Category';
 import { getImageName } from '../../components/common/Function';
 export default function EditCategory() {
@@ -30,20 +28,10 @@ export default function EditCategory() {
     // console.log(state, ">>>>>>>>>>>> setState");
 
     const [loading, setLoading] = useState(id ? true : false);
-    const [submitLoading, setSubmitLoading] = useState(false);
-    const [states, setStates] = useState<State[]>([]);
-    const [fileName, setFileName] = useState<string>("");
+    
     useEffect(() => {
         try {
-            const getstateList = async () => {
-                const getStateResult = await FetchData<StateResponse>('/state/getAll', 'POST', { page: 1, limit: 1000 });
-                if (getStateResult.status) {
-                    setStates(getStateResult.data.items);
-                } else {
-                    throw new Error(getStateResult.message || 'Failed to fetch States');
-                }
-            }
-            getstateList();
+
 
             if (id) {
                 const getCityById = async () => {
@@ -69,10 +57,10 @@ export default function EditCategory() {
                                 console.error("No data found in the response");
                             }
                         } else {
-                            throw new Error(result?.message || 'Failed to fetch city');
+                            throw new Error(result?.message || 'Failed to fetch categories');
                         }
                     } catch (error) {
-                        console.error("Failed to fetch city:", error);
+                        console.error("Failed to fetch categories:", error);
                     } finally {
                         setLoading(false);
                     }
@@ -80,11 +68,11 @@ export default function EditCategory() {
                 getCityById();
             }
         } catch (error) {
-            console.error("Failed to fetch state:", error);
+            console.error("Failed to fetch categories:", error);
         }
 
     }, [id]);
-    console.log(states, ">>>>>>>>>>>> states");
+ 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -97,8 +85,8 @@ export default function EditCategory() {
                 formData.append("images", file);
 
                 const addImage = await FetchImageData("/upload/image", "POST", formData, {}, true);
-                if (!addImage.status || !addImage.data || !addImage.data[0].url) {
-                    throw new Error("Image upload failed");
+                if (Array.isArray(addImage.data)) {
+                    console.log(addImage.data[0]); // Safe access
                 }
 
                 imageURL = addImage.data[0].url;
@@ -155,22 +143,12 @@ export default function EditCategory() {
                             <FileInput
                                 label="Category Image"
                                 ref={fileInputRef}
-                                fileName={ (category.image)?getImageName(category.image):''}
-                                onChange={(e) => {
+                                fileName={(category.image) ? getImageName(category.image.toString()) : ''}
+                                // fileName={(category.image) ? getImageName(category.image) : ''}
+                                onChange={() => {
                                     setCategory({ ...category, image: category.image });
                                 }}
-
                             />
-                            {/* <Select
-                                label="State"
-                                required={true}
-                                options={states.map((state) => ({
-                                    label: state.name,
-                                    value: state.id
-                                }))}
-                                onChange={handlStateChange}
-                                defaultValue={category.stateId ? category.stateId : 'Select state'}
-                            /> */}
                         </div>
                         <div>
                             <Select
