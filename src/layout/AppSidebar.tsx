@@ -7,6 +7,7 @@ import {
   HorizontaLDots,
   UserIcons,
   DashboardIcons,
+  MapIcons,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -32,19 +33,13 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    icon: <UserIcons />,
-    name: "Country",
-    path: "/country",
-  },
-  {
-    icon: <UserIcons />,
-    name: "State",
-    path: "/state",
-  },
-  {
-    icon: <UserIcons />,
-    name: "City",
-    path: "/city",
+    icon: <MapIcons />,
+    name: "Location",
+    subItems: [
+      { name: "Country", path: "/country", pro: false },
+      { name: "State", path: "/state", pro: false },
+      { name: "City", path: "/city", pro: false },
+    ],
   },
   {
     icon: <UserIcons />,

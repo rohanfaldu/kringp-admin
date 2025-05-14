@@ -8,7 +8,7 @@ export interface State {
 }
 
 export interface StateResponse {
-    states: State[];
+    items: State[];
     pagination: {
         total: number;
         page: number;

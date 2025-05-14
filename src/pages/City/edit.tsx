@@ -34,14 +34,14 @@ export default function EditState() {
         try {
             const getstateList = async () => {
                 const getStateResult = await FetchData<StateResponse>('/state/getAll', 'POST', { page: 1, limit: 1000 });
-                console.log(getStateResult, 'result')
                 if (getStateResult.status) {
-                    setStates(getStateResult.data.states);
+                    setStates(getStateResult.data.items);
                 } else {
                     throw new Error(getStateResult.message || 'Failed to fetch States');
                 }
             }
             getstateList();
+            
             if (id) {
                 const getCityById = async () => {
                     setLoading(true);
@@ -56,7 +56,7 @@ export default function EditState() {
                                 setState({
                                     id: cityData.id || '',
                                     name: cityData.name || '',
-                                    stateId: cityData.stateId?.name || city.stateId || '',
+                                    stateId: cityData.stateId || city.stateId || '',
                                     status: cityData.status !== undefined ? cityData.status : true,
                                     createsAt: cityData.createdAt ? new Date(cityData.createdAt) : new Date(),
                                     updatedAt: cityData.updatedAt ? new Date(cityData.updatedAt) : new Date()
@@ -80,7 +80,7 @@ export default function EditState() {
         }
 
     }, [id]);
-
+    console.log(states, ">>>>>>>>>>>> states");
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         // console.log(city, ">>>>>>>>>>cityData");
@@ -143,7 +143,7 @@ export default function EditState() {
                                 onChange={(e) => setState({ ...city, name: e.target.value })}
                             />
                         </div>
-                        {/* <div>
+                        <div>
                             <Select
                                 label="State"
                                 required={true}
@@ -154,7 +154,7 @@ export default function EditState() {
                                 onChange={handlStateChange}
                                 defaultValue={city.stateId ? city.stateId : 'Select state'}
                             />
-                        </div> */}
+                        </div>
                         <div>
                             <Select
                                 label="Status"

@@ -51,7 +51,7 @@ export default function CityList() {
         try {
             const result = await FetchData<CityResponse>('/city/getAll', 'POST', { page, limit });
             if (result && result.status && result.data?.items) {
-                setCities(result.data.items);
+                setCities(result.data?.items);
                 setPagination({
                     total: result.data.pagination?.total || 0,
                     currentPage: result.data.pagination?.page || 1,

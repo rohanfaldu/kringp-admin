@@ -8,7 +8,7 @@ export interface City {
 }
 
 export interface CityResponse {
-    cities: City[];
+    items: City[];
     pagination: {
         total: number;
         page: number;
