@@ -9,6 +9,7 @@ import CountryList from "./pages/Country/Country";
 import StateList from "./pages/State/State";
 import CityList from "./pages/City/City";
 import SubCategoryList from "./pages/SubCategory/SubCategory"
+import EditSubCategory from "./pages/SubCategory/edit";
 import EditCountry from "./pages/Country//edit";
 import EditState from "./pages/State/edit";
 import EditCity from "./pages/City/edit";
@@ -49,6 +50,7 @@ export default function App() {
             <Route path="/state" element={<StateList />} />
             <Route path="/city" element={<CityList />} />
             <Route path="/sub-category" element={<SubCategoryList />} />
+            <Route path="/sub-categories/detail" element={<EditSubCategory />} />
             <Route path="/country/detail" element={<EditCountry />} />  {/* Add this route */}
             <Route path="/state/detail" element={<EditState />} />
             <Route path="/city/detail" element={<EditCity />} />

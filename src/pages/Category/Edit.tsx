@@ -12,6 +12,8 @@ import Select from "../../components/form/select/Select"
 import Button from '../../components/ui/button/Button';
 import { Categories } from '../../Types/Category';
 import { getImageName } from '../../components/common/Function';
+import { UploadedImage } from "../../Types/UploadedImage";
+
 export default function EditCategory() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -84,7 +86,7 @@ export default function EditCategory() {
                 const formData = new FormData();
                 formData.append("images", file);
 
-                const addImage = await FetchImageData("/upload/image", "POST", formData, {}, true);
+                const addImage = await FetchImageData<UploadedImage[]>("/upload/image", "POST", formData, {}, true);
                 if (Array.isArray(addImage.data)) {
                     console.log(addImage.data[0]); // Safe access
                 }

@@ -12,12 +12,16 @@ import Select from "../../components/form/select/Select"
 import Button from '../../components/ui/button/Button';
 import { SubCategories } from '../../Types/SubCategory';
 import { getImageName } from '../../components/common/Function';
-export default function EditCategory() {
+import { Categories } from '../../Types/Category';
+import { UploadedImage } from "../../Types/UploadedImage";
+
+export default function EditSubCategory() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const id = searchParams.get('id');
 
-    const [category, setCategory] = useState<SubCategories>({
+
+    const [category, setSubCategory] = useState<SubCategories>({
         id: '',
         name: '',
         image: '',
@@ -29,10 +33,24 @@ export default function EditCategory() {
     // console.log(state, ">>>>>>>>>>>> setState");
 
     const [loading, setLoading] = useState(id ? true : false);
-    
+    const [categories, setCategories] = useState<Categories[]>([]);
+
+
     useEffect(() => {
         try {
-
+   
+                const fetchCategories = async () => {
+                    try {
+                        const result = await FetchData<any>('/categories/getAll', 'POST');
+                        if (result.status) {
+                            setCategories(result.data.categories);
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch categories:', error);
+                    }
+                };
+                fetchCategories();
+  
 
             if (id) {
                 const getCityById = async () => {
@@ -42,18 +60,18 @@ export default function EditCategory() {
                         const result = await FetchData<any>(`/sub-categories/get/${id}`, 'GET');
 
                         if (result && result.status) {
-                            const categoryData = result.data;
+                            const subcategoryData = result.data;
 
-                            if (categoryData) {
-                                console.log(categoryData.image, 'Image')
-                                setCategory({
-                                    id: categoryData.id || '',
-                                    name: categoryData.name || '',
-                                    image: categoryData.image || '',
-                                    categoryId: categoryData.categoryId || '',
-                                    status: categoryData.status !== undefined ? categoryData.status : true,
-                                    createsAt: categoryData.createdAt ? new Date(categoryData.createdAt) : new Date(),
-                                    updatedAt: categoryData.updatedAt ? new Date(categoryData.updatedAt) : new Date()
+                            if (subcategoryData) {
+                                console.log(subcategoryData.image, 'Image')
+                                setSubCategory({
+                                    id: subcategoryData.id || '',
+                                    name: subcategoryData.name || '',
+                                    image: subcategoryData.image || '',
+                                    categoryId: subcategoryData.categoryId || '',
+                                    status: subcategoryData.status !== undefined ? subcategoryData.status : true,
+                                    createsAt: subcategoryData.createdAt ? new Date(subcategoryData.createdAt) : new Date(),
+                                    updatedAt: subcategoryData.updatedAt ? new Date(subcategoryData.updatedAt) : new Date()
                                 });
                             } else {
                                 console.error("No data found in the response");
@@ -74,7 +92,7 @@ export default function EditCategory() {
         }
 
     }, [id]);
- 
+    console.log(categories, ">>>>>>>>>>>> categories Data")
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -86,27 +104,27 @@ export default function EditCategory() {
                 const formData = new FormData();
                 formData.append("images", file);
 
-                const addImage = await FetchImageData("/upload/image", "POST", formData, {}, true);
+                const addImage = await FetchImageData<UploadedImage[]>("/upload/image", "POST", formData, {}, true);
                 if (Array.isArray(addImage.data)) {
                     console.log(addImage.data[0]); // Safe access
                 }
 
-                // imageURL = addImage.data[0].url;
+                imageURL = addImage.data[0].url;
             }
 
             const parameter = {
                 name: category.name,
                 image: imageURL,
-
+                categoryId: category.categoryId,
                 status: category.status,
             };
 
-            const endpoint = id ? `/categories/edit/${id}` : '/categories/create';
+            const endpoint = id ? `/sub-categories/edit/${id}` : '/sub-categories/create';
             const method = 'POST';
             const result = await FetchData(endpoint, method, parameter);
-
+            console.log(result, ">>>>>> result")
             if (result.status) {
-                navigate('/category');
+                navigate('/sub-category');
             }
 
         } catch (error) {
@@ -120,36 +138,53 @@ export default function EditCategory() {
 
     const handleStatusChange = (value: string) => {
         console.log(value, '>>>>> value')
-        setCategory({ ...category, status: value === 'true' });
+        setSubCategory({ ...category, status: value === 'true' });
     };
 
+    const handleCategoryChange = (value: string) => {
+        console.log(value, '>>>>> selected category id');
+        setSubCategory({ ...category, categoryId: value });
+    };
 
     return (
         <>
             <PageMeta
-                title={id ? "Edit Category" : "Add Category"}
-                description={id ? "Edit Category Details" : "Add New Category"}
+                title={id ? "Edit Sub Categories" : "Add Sub Categories"}
+                description={id ? "Edit Sub Categories Details" : "Add New Sub Categories"}
             />
-            <PageBreadcrumb pageTitle={id ? "Edit Category" : "Add Category"} />
+            <PageBreadcrumb pageTitle={id ? "Edit Sub Categories" : "Add Sub Categories"} />
             <div className="space-y-6">
-                <ComponentCard title={id ? "Edit Category" : "Add Category"}>
+                <ComponentCard title={id ? "Edit Sub Categories" : "Add Sub Categories"}>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <InputField
-                                label="Category Name"
+                                label="Sub Category Name"
                                 type="text"
                                 value={category.name}
-                                onChange={(e) => setCategory({ ...category, name: e.target.value })}
+                                onChange={(e) => setSubCategory({ ...category, name: e.target.value })}
                             />
                         </div>
                         <div>
+                            <Select
+                                label="Category"
+                                required={true}
+                                options={categories.map((category) => ({
+                                    label: category.name,
+                                    value: category.id
+                                }))}
+                                onChange={handleCategoryChange}
+                                defaultValue={category.categoryId || ''}
+                            />
+                        </div>
+
+                        <div>
                             <FileInput
-                                label="Category Image"
+                                label="Sub Category Image"
                                 ref={fileInputRef}
                                 fileName={(category.image) ? getImageName(category.image.toString()) : ''}
                                 // fileName={(category.image) ? getImageName(category.image) : ''}
                                 onChange={() => {
-                                    setCategory({ ...category, image: category.image });
+                                    setSubCategory({ ...category, image: category.image });
                                 }}
                             />
                         </div>
@@ -180,7 +215,6 @@ export default function EditCategory() {
                             >
                                 Save Changes
                             </Button>
-
                         </div>
                     </form>
                 </ComponentCard>
