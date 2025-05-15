@@ -4,7 +4,7 @@ export interface SubCategories {
     name: string;
     categoryId: string;
     status: boolean;
-    createdAt: Date;
+    createsAt: Date;
     updatedAt: Date;
 }
 

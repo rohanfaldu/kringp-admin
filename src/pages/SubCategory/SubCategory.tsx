@@ -125,7 +125,7 @@ export default function CategoryList() {
             const result = await FetchData<SubCategoryResponse>('/sub-categories/getAll', 'POST', { page, limit }, {});
             if (result.status) {
                 const sortedSubCategory = result.data.items.sort(
-                    (a: SubCategories, b: SubCategories) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                    (a: SubCategories, b: SubCategories) => new Date(b.createsAt).getTime() - new Date(a.createsAt).getTime()
                 );
 
                 setCategories(sortedSubCategory);

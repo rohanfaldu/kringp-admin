@@ -184,8 +184,8 @@ function AdvancedTable<T extends Record<string, any>>({
       <Preloader />
     ) : (
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4">
+        <div className="flex justify-end items-center">       
+          {/* <div className="flex items-center gap-4">
             <input
               type="text"
               placeholder="Search..."
@@ -193,7 +193,7 @@ function AdvancedTable<T extends Record<string, any>>({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-          </div>
+          </div> */}
           <div>
 
             <div className="flex justify-center items-center gap-4">
