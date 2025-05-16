@@ -94,7 +94,7 @@ function AdvancedTable<T extends Record<string, any>>({
   // Filter data when search term changes
   useEffect(() => {
     if (!data) return;
-
+    setSearchTerm('');
     if (searchTerm === '') {
       setFilteredData(data);
     } else {
