@@ -34,6 +34,8 @@ export default function SignInForm() {
       const userPerameter = {
         emailAddress: formData.email,
         password: formData.password,
+        socialId: null,
+        loginType: "NONE",
         fcmToken: "FCM1458746"
       };
       const result = await FetchData<AutUserResponse>( '/user/login', 'POST', userPerameter); 

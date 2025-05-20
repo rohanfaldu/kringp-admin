@@ -8,6 +8,8 @@ import { Brand, BrandResponse } from "../../Types/Brand";
 import { Pagination } from "../../Types/Pagination";
 import Preloader from "../../components/common/Preloader";
 import { FetchData } from "../../utils/FetchData";
+import { ToastContainer, toast } from 'react-toastify';
+import ConfirmPopup from "../../components/common/ConfirmPopup";
 
 export default function BrandList() {
     const [brands, setBrands] = useState<Brand[]>([]);
@@ -15,6 +17,8 @@ export default function BrandList() {
     const [loading, setLoading] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+    const [deleteId, setDeleteId] = useState<string>("");
+    const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
 
     const navigate = useNavigate();
 
@@ -68,27 +72,75 @@ export default function BrandList() {
         },
     ];
 
+    useEffect(() => {
+        fetchBrands(currentPage, rowsPerPage);
+    }, [currentPage, rowsPerPage]);
+
     // Add these handler function
 
-    const handleDelete = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this brand?')) {
-            try {
-                const response = await fetch(`https://api.kringp.com/api/brand-type/delete/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
+    // const handleDelete = async (id: string) => {
+    //     if (window.confirm('Are you sure you want to delete this brand?')) {
+    //         try {
+    //             const response = await fetch(`https://api.kringp.com/api/brand-type/delete/${id}`, {
+    //                 method: 'DELETE',
+    //                 headers: {
+    //                     'Content-Type': 'application/json'
+    //                 }
+    //             });
+
+    //             if (response.ok) {
+    //                 // Refresh the table data
+    //                 fetchBrands(currentPage, rowsPerPage);
+    //             } else {
+    //                 throw new Error('Failed to delete brand');
+    //             }
+    //         } catch (error) {
+    //             console.error('Error deleting brand:', error);
+    //         }
+    //     }
+    // };
+
+     const handleDelete = async (id: string) => {
+        setDeleteId(id);
+        setIsConfirmOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+       
+        try {
+            const response = await FetchData(
+                 `/brand-type/delete/${deleteId}`,
+                'DELETE',
+                { id: deleteId },
+            );
+
+            if (response.status) {
+                toast.success("Brand Deleted Successfully!", {
+                    style: {
+                        backgroundColor: "#F0FDF4",
+                        color: "#166534"
                     }
                 });
-
-                if (response.ok) {
-                    // Refresh the table data
-                    fetchBrands(currentPage, rowsPerPage);
-                } else {
-                    throw new Error('Failed to delete brand');
-                }
-            } catch (error) {
-                console.error('Error deleting brand:', error);
+                // fetchSubCategories(currentPage);
+            } else {
+                toast.error(response.message || "Failed to delete Brand", {
+                    style: {
+                        backgroundColor: "#FEF2F2",
+                        color: "#991B1B"
+                    }
+                });
             }
+        } catch (error) {
+            console.error('Error deleting:', error);
+            toast.error("Failed to delete Brand.", {
+                style: {
+                    backgroundColor: "#FEF2F2",
+                    color: "#991B1B"
+                }
+            });
+        } finally {
+            setIsConfirmOpen(false);
+            setDeleteId("");
         }
     };
 
@@ -170,6 +222,36 @@ export default function BrandList() {
                 </ComponentCard>
 
             </div>
+            <ConfirmPopup
+                isOpen={isConfirmOpen}
+                message="Are you sure you want to delete this Brand ?"
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setIsConfirmOpen(false)}
+                title="Delete Brand"
+                confirmText="Delete"
+                cancelText="Cancel"
+            />
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable={false}
+                pauseOnHover
+                theme="light"
+                closeButton={false}
+                style={{ width: "auto" }}
+                toastStyle={{
+                    padding: "16px",
+                    margin: "8px 0",
+                    borderRadius: "8px",
+                    boxShadow: "none",
+                    minHeight: "auto"
+                }}
+            />
         </>
     );
 }

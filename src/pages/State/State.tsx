@@ -8,6 +8,8 @@ import { State, StateResponse } from "../../Types/State";
 import { Pagination } from "../../Types/Pagination";
 import Preloader from "../../components/common/Preloader";
 import { FetchData } from "../../utils/FetchData";
+import { ToastContainer, toast } from 'react-toastify';
+import ConfirmPopup from "../../components/common/ConfirmPopup";
 
 export default function StateList() {
     const [states, setStates] = useState<State[]>([]);
@@ -15,6 +17,8 @@ export default function StateList() {
     const [loading, setLoading] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+    const [deleteId, setDeleteId] = useState<string>("");
+    const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
 
     const navigate = useNavigate();
 
@@ -75,27 +79,77 @@ export default function StateList() {
         },
     ];
 
+     useEffect(() => {
+        fetchStates(currentPage, rowsPerPage);
+    }, [currentPage, rowsPerPage]);
+
+    // const handleDelete = async (id: string) => {
+    //     if (window.confirm('Are you sure you want to delete this state?')) {
+    //         try {
+    //             const response = await fetch(`https://api.kringp.com/api/state/delete/${id}`, {
+    //                 method: 'DELETE',
+    //                 headers: {
+    //                     'Content-Type': 'application/json'
+    //                 }
+    //             });
+
+    //             if (response.ok) {
+    //                 // Refresh the table data
+    //                 fetchStates(currentPage, rowsPerPage);
+    //             } else {
+    //                 throw new Error('Failed to delete state');
+    //             }
+    //         } catch (error) {
+    //             console.error('Error deleting state:', error);
+    //         }
+    //     }
+    // };
+
     const handleDelete = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this state?')) {
-            try {
-                const response = await fetch(`https://api.kringp.com/api/state/delete/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
+        setDeleteId(id);
+        setIsConfirmOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+       
+        try {
+            const response = await FetchData(
+                // '/sub-categories/delete/${id}',
+                 `/state/delete/${deleteId}`,
+                'DELETE',
+                { id: deleteId },
+            );
+
+            if (response.status) {
+                toast.success("state Deleted Successfully!", {
+                    style: {
+                        backgroundColor: "#F0FDF4",
+                        color: "#166534"
                     }
                 });
-
-                if (response.ok) {
-                    // Refresh the table data
-                    fetchStates(currentPage, rowsPerPage);
-                } else {
-                    throw new Error('Failed to delete state');
-                }
-            } catch (error) {
-                console.error('Error deleting state:', error);
+                // fetchSubCategories(currentPage);
+            } else {
+                toast.error(response.message || "Failed to delete state", {
+                    style: {
+                        backgroundColor: "#FEF2F2",
+                        color: "#991B1B"
+                    }
+                });
             }
+        } catch (error) {
+            console.error('Error deleting:', error);
+            toast.error("Failed to delete state.", {
+                style: {
+                    backgroundColor: "#FEF2F2",
+                    color: "#991B1B"
+                }
+            });
+        } finally {
+            setIsConfirmOpen(false);
+            setDeleteId("");
         }
     };
+
 
     const fetchStates = async (page: number, limit: number) => {
         setLoading(true);
@@ -205,6 +259,36 @@ export default function StateList() {
                     />
                 </ComponentCard>
             </div>
+            <ConfirmPopup
+                isOpen={isConfirmOpen}
+                message="Are you sure you want to delete this state?"
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setIsConfirmOpen(false)}
+                title="Delete State"
+                confirmText="Delete"
+                cancelText="Cancel"
+            />
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable={false}
+                pauseOnHover
+                theme="light"
+                closeButton={false}
+                style={{ width: "auto" }}
+                toastStyle={{
+                    padding: "16px",
+                    margin: "8px 0",
+                    borderRadius: "8px",
+                    boxShadow: "none",
+                    minHeight: "auto"
+                }}
+            />
         </>
     );
 }
