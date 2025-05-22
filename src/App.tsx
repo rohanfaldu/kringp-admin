@@ -19,6 +19,9 @@ import CategoryList from "./pages/Category/Category";
 import EditCategory from "./pages/Category/Edit";
 import BrandList from "./pages/Brand/Brand";
 import EditBrand from "./pages/Brand/Edit";
+import AppSettings from "./pages/AppSettings/AppSettings";
+import EditAppSettings from "./pages/AppSettings/Edit";
+
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -63,6 +66,10 @@ export default function App() {
             <Route path="/sub-categories/detail" element={<EditSubCategory />} />
             <Route path="/brand" element={<BrandList />} />
             <Route path="/brand/detail" element={<EditBrand />} />
+            <Route path="/app-settings" element={<AppSettings />} />
+            <Route path="/app-settings/detail" element={<EditAppSettings />} />
+
+
 
           </Route>
 

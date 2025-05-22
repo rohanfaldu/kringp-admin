@@ -55,6 +55,11 @@ const navItems: NavItem[] = [
     icon: <BrandIcons />,
     name: "Brand",
     path: "/brand"
+  },
+  {
+    icon: <BrandIcons />,
+    name: "App Settings",
+    path: "/app-settings"
   }
 ];
 
