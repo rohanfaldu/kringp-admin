@@ -19,7 +19,7 @@ export default function StateList() {
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
     const [deleteId, setDeleteId] = useState<string>("");
     const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
-    const [countryMap, setCountryMap] = useState<{ [key: string]: string }>({});
+    const [countryMap] = useState<{ [key: string]: string }>({});
 
     const navigate = useNavigate();
 

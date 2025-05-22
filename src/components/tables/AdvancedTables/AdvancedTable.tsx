@@ -55,7 +55,6 @@ function AdvancedTable<T extends Record<string, any>>({
   loading = false,
   pagination = null,
   onPageChange,
-  searchFunction,
   onSearch
 }: AdvancedTableProps<T>) {
   const [searchInput, setSearchInput] = useState('');

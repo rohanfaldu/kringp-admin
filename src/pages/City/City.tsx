@@ -5,7 +5,6 @@ import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
 import AdvancedTable from "../../components/tables/AdvancedTables/AdvancedTable";
 import { City, CityResponse } from "../../Types/City";
-import { State } from "../../Types/State";
 import { Pagination } from "../../Types/Pagination";
 import Preloader from "../../components/common/Preloader";
 import { FetchData } from "../../utils/FetchData";
@@ -14,7 +13,7 @@ import ConfirmPopup from "../../components/common/ConfirmPopup";
 
 export default function CityList() {
     const [cities, setCities] = useState<City[]>([]);
-    const [stateMap, setStateMap] = useState<{ [key: string]: string }>({});
+    const [stateMap] = useState<{ [key: string]: string }>({});
     const [pagination, setPagination] = useState<Pagination | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -98,20 +97,20 @@ export default function CityList() {
         }
     };
 
-    const fetchStates = async () => {
-        try {
-            const result = await FetchData<{ items: State[] }>('/state/getAll', 'POST', { page: 1, limit: 1000 });
-            if (result && result.status && result.data?.items) {
-                const map: { [key: string]: string } = {};
-                result.data.items.forEach((state) => {
-                    map[state.id] = state.name;
-                });
-                setStateMap(map);
-            }
-        } catch (error) {
-            console.error("Failed to fetch States:", error);
-        }
-    };
+    // const fetchStates = async () => {
+    //     try {
+    //         const result = await FetchData<{ items: State[] }>('/state/getAll', 'POST', { page: 1, limit: 1000 });
+    //         if (result && result.status && result.data?.items) {
+    //             const map: { [key: string]: string } = {};
+    //             result.data.items.forEach((state) => {
+    //                 map[state.id] = state.name;
+    //             });
+    //             setStateMap(map);
+    //         }
+    //     } catch (error) {
+    //         console.error("Failed to fetch States:", error);
+    //     }
+    // };
  
     useEffect(() => {
         fetchCities(currentPage, rowsPerPage);
@@ -127,9 +126,10 @@ export default function CityList() {
             header: 'State Name',
             accessorKey: 'stateId',
             cell: (info: any) => {
-                const stateId = info.getValue();
+                // const stateId = info.getValue();
                 // return `${stateMap[stateId] || 'Not Assigned'}`;
                 return `${info.row.original.stateKey.name || 'Not Assigned'}`;
+                
             }
         },
         {
