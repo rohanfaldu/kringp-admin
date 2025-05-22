@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
-
+ 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -16,7 +16,9 @@ export default defineConfig({
     }),
   ],
   server: {
+    host: '0.0.0.0',
     port: 5000,
+    allowedHosts: ['admin.kringp.com'],
     proxy: {
       '/api': {
         target: 'https://api.kringp.com',
