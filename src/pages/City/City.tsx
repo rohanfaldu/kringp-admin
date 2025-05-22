@@ -77,8 +77,8 @@ export default function CityList() {
         try {
             const result = await FetchData<CityResponse>('/city/getAll', 'POST', { page, limit });
             if (result && result.status && result.data?.items) {
-                const sortedCity = result.data.items.sort(
-                    (a: City, b: City) => new Date(b.createsAt).getTime() - new Date(a.createsAt).getTime()
+                const sortedCity = result.data.items.sort((a: City, b: City) =>
+                    a.name.localeCompare(b.name)
                 );
                 setCities(sortedCity);
                 setPagination({
@@ -142,11 +142,7 @@ export default function CityList() {
             accessorKey: 'createsAt',
             cell: (info: any) => new Date(info.getValue()).toLocaleDateString(),
         },
-        // {
-        //     header: 'updated At',
-        //     accessorKey: 'updatedAt',
-        //     cell: (info: any) => new Date(info.getValue()).toLocaleDateString(),
-        // },
+
         {
             header: 'Actions',
             accessorKey: 'actions',

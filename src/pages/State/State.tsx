@@ -125,60 +125,34 @@ export default function StateList() {
         }
     };
 
-
     const fetchStates = async (page: number, limit: number) => {
         setLoading(true);
         try {
             const result = await FetchData<StateResponse>('/state/getAll', 'POST', { page, limit });
-            console.log('API response:', result);
-            if (result.status) {
-                const sortedState = result.data.items.sort(
-                    (a: State, b: State) => new Date(b.createsAt).getTime() - new Date(a.createsAt).getTime()
+            if (result && result.status && result.data?.items) {
+                const sortedState = result.data.items.sort((a: State, b: State) =>
+                    a.name.localeCompare(b.name)
                 );
-                if (result.data && Array.isArray(sortedState)) {
+                setStates(sortedState);
+                console.log(sortedState, ">>>>>>>>>>>>>fetchStates");
 
-                    setStates(sortedState);
-
-                    // Extract pagination information
-                    if (result.data.pagination) {
-                        setPagination({
-                            total: result.data.pagination.total || 0,
-                            currentPage: result.data.pagination.page || 1,
-                            limit: result.data.pagination.limit || 10,
-                            totalPages: result.data.pagination.totalPages || 1
-                        });
-                    } else {
-                        setPagination({
-                            total: result.data.items.length,
-                            currentPage: page,
-                            limit: limit,
-                            totalPages: Math.ceil(result.data.items.length / limit)
-                        });
-                    }
-                } else if (result.data && Array.isArray(result.data)) {
-                    // Alternative case: if data is directly an array of states
-                    setStates(result.data);
-                    setPagination({
-                        total: result.data.length,
-                        currentPage: page,
-                        limit: limit,
-                        totalPages: Math.ceil(result.data.length / limit)
-                    });
-                } else {
-                    console.error("Unexpected data structure:", result.data);
-                    setStates([]);
-                }
+                setPagination({
+                    total: result.data.pagination?.total || 0,
+                    currentPage: result.data.pagination?.page || 1,
+                    limit: result.data.pagination?.limit || 10,
+                    totalPages: result.data.pagination?.totalPages || 1
+                });
             } else {
-                console.error("API returned error:", result?.message || "Unknown error");
                 setStates([]);
             }
         } catch (error) {
-            console.error("Failed to fetch states:", error);
+            console.error("Failed to fetch States:", error);
             setStates([]);
         } finally {
             setLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchStates(currentPage, rowsPerPage);
@@ -201,7 +175,7 @@ export default function StateList() {
         return (
             (state.name && state.name.toLowerCase().includes(term)) ||
             // (state.countryId.id && state.countryId.id.toLowerCase().includes(term)) ||
-             (countryMap[state.countryId]?.toLowerCase().includes(term)) ||
+            (countryMap[state.countryId]?.toLowerCase().includes(term)) ||
             (state.countryId && state.countryId.toLowerCase().includes(term)) ||
             (typeof state.status === 'boolean' &&
                 (state.status ? 'active' : 'inactive').includes(term))
