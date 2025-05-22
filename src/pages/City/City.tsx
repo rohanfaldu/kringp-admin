@@ -28,31 +28,6 @@ export default function CityList() {
         navigate(`/city/detail?id=${city.id}`);
     };
 
-    useEffect(() => {
-        fetchCities(currentPage, rowsPerPage);
-    }, [currentPage, rowsPerPage]);
-
-    // const handleDelete = async (id: string) => {
-    //     if (window.confirm('Are you sure you want to delete this city?')) {
-    //         try {
-    //             const response = await fetch(`https://api.kringp.com/api/city/delete/${id}`, {
-    //                 method: 'DELETE',
-    //                 headers: {
-    //                     'Content-Type': 'application/json'
-    //                 }
-    //             });
-
-    //             if (response.ok) {
-    //                 fetchCities(currentPage, rowsPerPage);
-    //             } else {
-    //                 throw new Error('Failed to delete city');
-    //             }
-    //         } catch (error) {
-    //             console.error('Error deleting city:', error);
-    //         }
-    //     }
-    // };
-    
     const handleDelete = async (id: string) => {
         setDeleteId(id);
         setIsConfirmOpen(true);
@@ -74,7 +49,7 @@ export default function CityList() {
                         color: "#166534"
                     }
                 });
-                // fetchSubCategories(currentPage);
+                fetchCities(currentPage, rowsPerPage);
             } else {
                 toast.error(response.message || "Failed to delete city", {
                     style: {
@@ -137,10 +112,10 @@ export default function CityList() {
             console.error("Failed to fetch States:", error);
         }
     };
-
+ 
     useEffect(() => {
         fetchCities(currentPage, rowsPerPage);
-        fetchStates();
+        // fetchStates();
     }, [currentPage, rowsPerPage]);
 
     const columns = [
@@ -153,7 +128,8 @@ export default function CityList() {
             accessorKey: 'stateId',
             cell: (info: any) => {
                 const stateId = info.getValue();
-                return `${stateMap[stateId] || 'Not Assigned'}`;
+                // return `${stateMap[stateId] || 'Not Assigned'}`;
+                return `${info.row.original.stateKey.name || 'Not Assigned'}`;
             }
         },
         {
@@ -166,6 +142,11 @@ export default function CityList() {
             accessorKey: 'createsAt',
             cell: (info: any) => new Date(info.getValue()).toLocaleDateString(),
         },
+        // {
+        //     header: 'updated At',
+        //     accessorKey: 'updatedAt',
+        //     cell: (info: any) => new Date(info.getValue()).toLocaleDateString(),
+        // },
         {
             header: 'Actions',
             accessorKey: 'actions',
@@ -215,7 +196,7 @@ export default function CityList() {
         label: "Add City",
         slug: "/city/detail"
     }
-
+    console.log(pagination, '>>>>> pagination');
     return (
         <>
             <PageMeta title="Cities List" description="Cities List" />
@@ -228,7 +209,7 @@ export default function CityList() {
                         columns={columns}
                         loading={loading}
                         pagination={pagination}
-                        onPageChange={(page) => setCurrentPage(page)}
+                        onPageChange={(currentPage) => setCurrentPage(currentPage)}
                         onRowsPerPageChange={(limit) => { setRowsPerPage(limit); setCurrentPage(1); }}
                         searchFunction={searchCities}
                     />

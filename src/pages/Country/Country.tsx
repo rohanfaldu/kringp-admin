@@ -76,34 +76,6 @@ export default function CountryList() {
         },
     ];
 
-     useEffect(() => {
-        fetchCountries(currentPage, rowsPerPage);
-    }, [currentPage, rowsPerPage]);
-
-    // Add these handler function
-
-    // const handleDelete = async (id: string) => {
-    //     if (window.confirm('Are you sure you want to delete this country?')) {
-    //         try {
-    //             const response = await fetch(`https://api.kringp.com/api/country/delete/${id}`, {
-    //                 method: 'DELETE',
-    //                 headers: {
-    //                     'Content-Type': 'application/json'
-    //                 }
-    //             });
-
-    //             if (response.ok) {
-    //                 // Refresh the table data
-    //                 fetchCountries(currentPage, rowsPerPage);
-    //             } else {
-    //                 throw new Error('Failed to delete country');
-    //             }
-    //         } catch (error) {
-    //             console.error('Error deleting country:', error);
-    //         }
-    //     }
-    // };
-
     const handleDelete = async (id: string) => {
         setDeleteId(id);
         setIsConfirmOpen(true);
@@ -126,7 +98,7 @@ export default function CountryList() {
                         color: "#166534"
                     }
                 });
-                // fetchSubCategories(currentPage);
+                fetchCountries(currentPage, rowsPerPage);
             } else {
                 toast.error(response.message || "Failed to delete country", {
                     style: {

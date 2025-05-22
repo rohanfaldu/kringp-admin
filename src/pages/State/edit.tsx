@@ -60,6 +60,8 @@ export default function EditState() {
                                     createsAt: stateData.createdAt ? new Date(stateData.createdAt) : new Date(),
                                     updatedAt: stateData.updatedAt ? new Date(stateData.updatedAt) : new Date()
                                 });
+                                console.log(stateData.countryId, ">>>>>>>>>>>> stateData Country");
+
                             } else {
                                 console.error("No state data found in the response");
                             }
@@ -80,19 +82,20 @@ export default function EditState() {
 
     }, [id]);
 
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(state, ">>>>>>>>>>stateData");
+        console.log(state.countryId, ">>>>>>>>>>stateData");
         try {
             let perameter = {};
-            if(id){
+            if (id) {
                 perameter = {
                     id: state.id,
                     name: state.name,
                     countryId: state.countryId,
                     status: state.status,
                 }
-            }else{
+            } else {
                 perameter = {
                     name: state.name,
                     countryId: state.countryId,
@@ -103,6 +106,8 @@ export default function EditState() {
             const method = id ? 'POST' : 'POST';
             const result = await FetchData(endpoint, method, perameter);
             console.log(state, ">>>>>>>>>>>> state");
+            console.log(state.countryId, ">>>>>>>>>>>> state-countryId");
+
             if (result.status) {
                 navigate('/state');
             }
@@ -115,12 +120,12 @@ export default function EditState() {
     }
 
     const handleStatusChange = (value: string) => {
-        console.log(value,'>>>>> value')
+        console.log(value, '>>>>> value')
         setState({ ...state, status: value === 'true' });
     };
 
-     const handlCountryChange = (value: string) => {
-        console.log(value,'>>>>> value')
+    const handlCountryChange = (value: string) => {
+        console.log(value, '>>>>> value')
         setState({ ...state, countryId: value });
     };
 
@@ -158,7 +163,9 @@ export default function EditState() {
                                     value: country.id
                                 }))}
                                 onChange={handlCountryChange}
-                                defaultValue={state.countryId ? state.countryId : 'Select Country'}
+                                // defaultValue={state.countryId ? state.countryId : 'Select Country'}
+                                defaultValue={state.countryId}
+                                placeholder="Select Country"
                             />
                         </div>
                         <div>

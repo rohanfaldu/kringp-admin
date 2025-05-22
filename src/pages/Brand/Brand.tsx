@@ -72,44 +72,16 @@ export default function BrandList() {
         },
     ];
 
-    useEffect(() => {
-        fetchBrands(currentPage, rowsPerPage);
-    }, [currentPage, rowsPerPage]);
-
-    // Add these handler function
-
-    // const handleDelete = async (id: string) => {
-    //     if (window.confirm('Are you sure you want to delete this brand?')) {
-    //         try {
-    //             const response = await fetch(`https://api.kringp.com/api/brand-type/delete/${id}`, {
-    //                 method: 'DELETE',
-    //                 headers: {
-    //                     'Content-Type': 'application/json'
-    //                 }
-    //             });
-
-    //             if (response.ok) {
-    //                 // Refresh the table data
-    //                 fetchBrands(currentPage, rowsPerPage);
-    //             } else {
-    //                 throw new Error('Failed to delete brand');
-    //             }
-    //         } catch (error) {
-    //             console.error('Error deleting brand:', error);
-    //         }
-    //     }
-    // };
-
-     const handleDelete = async (id: string) => {
+    const handleDelete = async (id: string) => {
         setDeleteId(id);
         setIsConfirmOpen(true);
     };
 
     const handleConfirmDelete = async () => {
-       
+
         try {
             const response = await FetchData(
-                 `/brand-type/delete/${deleteId}`,
+                `/brand-type/delete/${deleteId}`,
                 'DELETE',
                 { id: deleteId },
             );
@@ -121,7 +93,8 @@ export default function BrandList() {
                         color: "#166534"
                     }
                 });
-                // fetchSubCategories(currentPage);
+                fetchBrands(currentPage, rowsPerPage);
+
             } else {
                 toast.error(response.message || "Failed to delete Brand", {
                     style: {

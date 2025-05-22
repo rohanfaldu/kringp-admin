@@ -19,6 +19,7 @@ export default function StateList() {
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
     const [deleteId, setDeleteId] = useState<string>("");
     const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
+    const [countryMap, setCountryMap] = useState<{ [key: string]: string }>({});
 
     const navigate = useNavigate();
 
@@ -37,6 +38,7 @@ export default function StateList() {
             cell: (info: any) => {
                 const countryKey = info.getValue();
                 return countryKey?.name || 'Not Assigned';
+                // return `${info.row.original.countryId.name || 'Not Assigned'}`;
             }
         },
         {
@@ -79,43 +81,16 @@ export default function StateList() {
         },
     ];
 
-     useEffect(() => {
-        fetchStates(currentPage, rowsPerPage);
-    }, [currentPage, rowsPerPage]);
-
-    // const handleDelete = async (id: string) => {
-    //     if (window.confirm('Are you sure you want to delete this state?')) {
-    //         try {
-    //             const response = await fetch(`https://api.kringp.com/api/state/delete/${id}`, {
-    //                 method: 'DELETE',
-    //                 headers: {
-    //                     'Content-Type': 'application/json'
-    //                 }
-    //             });
-
-    //             if (response.ok) {
-    //                 // Refresh the table data
-    //                 fetchStates(currentPage, rowsPerPage);
-    //             } else {
-    //                 throw new Error('Failed to delete state');
-    //             }
-    //         } catch (error) {
-    //             console.error('Error deleting state:', error);
-    //         }
-    //     }
-    // };
-
     const handleDelete = async (id: string) => {
         setDeleteId(id);
         setIsConfirmOpen(true);
     };
 
     const handleConfirmDelete = async () => {
-       
+
         try {
             const response = await FetchData(
-                // '/sub-categories/delete/${id}',
-                 `/state/delete/${deleteId}`,
+                `/state/delete/${deleteId}`,
                 'DELETE',
                 { id: deleteId },
             );
@@ -127,7 +102,7 @@ export default function StateList() {
                         color: "#166534"
                     }
                 });
-                // fetchSubCategories(currentPage);
+                fetchStates(currentPage, rowsPerPage);
             } else {
                 toast.error(response.message || "Failed to delete state", {
                     style: {
@@ -225,7 +200,8 @@ export default function StateList() {
         const term = searchTerm.toLowerCase();
         return (
             (state.name && state.name.toLowerCase().includes(term)) ||
-            // (state.countryKey.name && state.countryKey.name.toLowerCase().includes(term)) ||
+            // (state.countryId.id && state.countryId.id.toLowerCase().includes(term)) ||
+             (countryMap[state.countryId]?.toLowerCase().includes(term)) ||
             (state.countryId && state.countryId.toLowerCase().includes(term)) ||
             (typeof state.status === 'boolean' &&
                 (state.status ? 'active' : 'inactive').includes(term))

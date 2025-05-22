@@ -57,7 +57,7 @@ export default function EditState() {
                                     name: cityData.name || '',
                                     stateId: cityData.stateId || city.stateId || '',
                                     status: cityData.status !== undefined ? cityData.status : true,
-                                    createsAt: cityData.createdAt ? new Date(cityData.createdAt) : new Date(),
+                                    createsAt: cityData.createdAt ? new Date(cityData.creatdAt) : new Date(),
                                     updatedAt: cityData.updatedAt ? new Date(cityData.updatedAt) : new Date()
                                 });
                             } else {
@@ -151,7 +151,9 @@ export default function EditState() {
                                     value: state.id
                                 }))}
                                 onChange={handlStateChange}
-                                defaultValue={city.stateId ? city.stateId : 'Select state'}
+                                // defaultValue={city.stateId ? city.stateId : 'Select state'}
+                                defaultValue={city.stateId}
+                                placeholder="Select State"
                             />
                         </div>
                         <div>

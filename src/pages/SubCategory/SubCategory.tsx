@@ -102,42 +102,16 @@ export default function CategoryList() {
         fetchSubCategories(currentPage, rowsPerPage);
     }, [currentPage, rowsPerPage]);
 
-
-    // Add these handler function
-
-    // const handleDelete = async (id: string) => {
-    //     if (window.confirm('Are you sure you want to delete this category?')) {
-    //         try {
-    //             const response = await fetch(`https://api.kringp.com/api/sub-categories/delete/${id}`, {
-    //                 method: 'DELETE',
-    //                 headers: {
-    //                     'Content-Type': 'application/json'
-    //                 }
-    //             });
-
-    //             if (response.ok) {
-    //                 // Refresh the table data
-    //                 fetchSubCategories(currentPage, rowsPerPage);
-    //             } else {
-    //                 throw new Error('Failed to delete sub-categories');
-    //             }
-    //         } catch (error) {
-    //             console.error('Error deleting sub-categories:', error);
-    //         }
-    //     }
-    // };
-
     const handleDelete = async (id: string) => {
         setDeleteId(id);
         setIsConfirmOpen(true);
     };
 
     const handleConfirmDelete = async () => {
-       
+
         try {
             const response = await FetchData(
-                // '/sub-categories/delete/${id}',
-                 `/sub-categories/delete/${deleteId}`,
+                `/sub-categories/delete/${deleteId}`,
                 'DELETE',
                 { id: deleteId },
             );
@@ -149,7 +123,7 @@ export default function CategoryList() {
                         color: "#166534"
                     }
                 });
-                // fetchSubCategories(currentPage);
+                fetchSubCategories(currentPage, rowsPerPage);
             } else {
                 toast.error(response.message || "Failed to delete sub-category", {
                     style: {
